@@ -1,0 +1,12 @@
+{% extends 'base.html' %} {% block content %}
+<div class="uk-flex-between" uk-grid>
+    <div>
+        <h1>Success! Welcome, {{usuario.first_name}}</h1>
+        <p class="uk-text-success">Successfully registered (or logged in)!</p>
+    </div>
+    <div>
+        <a href="/logout">Log out</a>
+    </div>
+</div>
+{% endblock content %}{% block title %}Success{% endblock title %}
+{% block javascript %} {% endblock %}
