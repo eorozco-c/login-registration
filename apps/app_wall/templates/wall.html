@@ -23,7 +23,8 @@
         <legend>Post a message</legend>
         <textarea class="uk-textarea" name="create_message" id="create_message" cols="50" rows="10"></textarea>
         <div class="uk-margin-top uk-flex uk-flex-right">
-            <input class="uk-button uk-button-large uk-button-primary" type="submit" value="Post a message" />
+            <input class="uk-button uk-button-large uk-button-primary uk-border-rounded" type="submit"
+                value="Post a message" />
         </div>
     </form>
     {% for message in message_users  %}
@@ -44,10 +45,10 @@
                         {{comment.created_at}}</p>
                     <p class="uk-text-italic">{{comment.comment}}</p>
                     {% if comment.user_id == usuario.id %}
-                    <a class="uk-button uk-button-small uk-button-danger" href="/wall/comment_delete/{{comment.id}}"
-                        id="delete">Delete
+                    <a class="uk-button uk-button-small uk-button-danger uk-border-rounded"
+                        href="/wall/comment_delete/{{comment.id}}" id="delete" uk-icon="icon: trash">Delete
                         Comment
-                        <i class="icon-trash"></i></a>
+                    </a>
                     {% endif %}
                 </li>
             </ul>
@@ -61,7 +62,7 @@
         <textarea class="uk-margin-left uk-textarea uk-form-small" name="comment_message" id="comment_message" cols="50"
             rows="5"></textarea>
         <div class="uk-margin-top uk-flex uk-flex-right">
-            <input class="uk-button uk-button-secondary" type="submit" value="Post a comment" />
+            <input class="uk-button uk-button-secondary uk-border-rounded" type="submit" value="Post a comment" />
         </div>
     </form>
 
