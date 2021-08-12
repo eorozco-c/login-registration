@@ -1,13 +1,16 @@
-from django.shortcuts import redirect, render, HttpResponse
+from django.shortcuts import redirect, render
 from django.http import JsonResponse
-from .models import *
+from .models import User
 import bcrypt
 # Create your views here.
 
 def index(request):
+    if request.method == "GET":
+        if "id" in request.session:
+            return redirect("/wall")
     return render(request, "login.html")
 
-def create(request):
+def create_user(request):
     if request.method == "POST":
         fname = request.POST["fname"]
         lname = request.POST["lname"]
@@ -23,8 +26,8 @@ def create(request):
 
 def login(request):
     if request.method == "POST":
-        email = request.POST["email"]
-        password = request.POST["password"]
+        email = request.POST["email_login"]
+        password = request.POST["password_login"]
         errors = User.objects.validator_log(request.POST)
         if len(errors) > 0:
             return JsonResponse(errors)   
@@ -32,7 +35,7 @@ def login(request):
             usuario = User.objects.get(email=email)
         except:
             errors = {
-                "none" : "Email no existe favor registrese"
+                "email_login" : "Email no existe favor registrese"
             }
             return JsonResponse(errors) 
         if bcrypt.checkpw(password.encode(), usuario.password.encode()):
@@ -40,26 +43,18 @@ def login(request):
             return JsonResponse({"resultado": usuario.id })
         else:
             errors = {
-                "password" : "Contraseña incorrecta"
+                "password_login" : "Contraseña incorrecta"
             }
             return JsonResponse(errors)
-
-
 
 def success(request):
     if request.method == "GET":
         if "id" in request.session:
-            try:
-                usuario = User.objects.get(id=request.session["id"])
-            except:
-                usuario = None
-            context = {
-                "usuario" : usuario
-            }
-            return render(request, "success.html", context)
+            return redirect("/wall")
         return redirect("/")
 
 def logout(request):
     if request.method == "GET":
-        del request.session['id']
+        if "id" in request.session:
+            del request.session['id']
         return redirect("/")

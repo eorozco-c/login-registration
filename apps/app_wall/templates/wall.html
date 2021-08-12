@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% block title %}Wall{% endblock title %}
+{% block content %}
+<div class="uk-flex-between" uk-grid>
+    <h1>CodingDojo Wall</h1>
+    <div class="uk-flex-between" uk-grid>
+        <p>Welcome {{usuario.first_name}}</p>
+        <a href="/logout">Log out</a>
+    </div>
+</div>
+<hr class="uk-margin">
+{% if messages %}
+{% for m in messages %}
+<div id='div-alert' class='uk-alert-danger' uk-alert><a class='uk-alert-close' uk-close></a>
+    <p>{{m}}</p>
+</div>
+{% endfor %}
+{% endif %}
+<div class="uk-container">
+    <div id="alerts"></div>
+    <form action="/wall/create" method="POST">
+        {% csrf_token %}
+        <legend>Post a message</legend>
+        <textarea class="uk-textarea" name="create_message" id="create_message" cols="50" rows="10"></textarea>
+        <div class="uk-margin-top uk-flex uk-flex-right">
+            <input class="uk-button uk-button-large uk-button-primary" type="submit" value="Post a message" />
+        </div>
+    </form>
+    {% for message in message_users  %}
+    <hr class="uk-margin-small">
+    <p class="uk-text-primary uk-text-bold">{{message.user.first_name}} {{message.user.last_name}},
+        {{message.created_at}}</p>
+    <ul class="uk-list uk-margin-left">
+        <li>
+            <p class="uk-text-italic">{{message.message}}</p>
+        </li>
+        <li>
+            {% for comment in comments  %}
+            {% if comment.message_id == message.id %}
+            <hr class="uk-margin-small">
+            <ul class="uk-list uk-margin-left">
+                <li>
+                    <p class="uk-text-bold">{{comment.user.first_name}} {{comment.user.last_name}},
+                        {{comment.created_at}}</p>
+                    <p class="uk-text-italic">{{comment.comment}}</p>
+                    {% if comment.user_id == usuario.id %}
+                    <a class="uk-button uk-button-small uk-button-danger" href="/wall/comment_delete/{{comment.id}}"
+                        id="delete">Delete
+                        Comment
+                        <i class="icon-trash"></i></a>
+                    {% endif %}
+                </li>
+            </ul>
+            {% endif %}
+
+            {% endfor %}
+        </li>
+    </ul>
+    <form action="/wall/comment_message/{{message.id}}" method="POST">
+        {% csrf_token %}
+        <textarea class="uk-margin-left uk-textarea uk-form-small" name="comment_message" id="comment_message" cols="50"
+            rows="5"></textarea>
+        <div class="uk-margin-top uk-flex uk-flex-right">
+            <input class="uk-button uk-button-secondary" type="submit" value="Post a comment" />
+        </div>
+    </form>
+
+    {% endfor %}
+</div>
+{% endblock content %}
+{% block javascript %}
+{% endblock javascript %}

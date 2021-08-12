@@ -1,9 +1,10 @@
 {% extends 'base.html' %} {% block content %}
-<div uk-grid>
+<div class="uk-container uk-margin-auto" uk-grid>
   <div class="uk-width-1-2@s">
     <h1>Registration</h1>
     <form id="register" class="uk-form-horizontal" action="/create" method="POST" autocomplete="on">
       {% csrf_token %}
+
       <label class="uk-form-label" for="fname">First Name:</label>
       <input type="text" id="fname" name="fname" />
       <label class="uk-form-label" for="lname">Last Name:</label>
@@ -25,10 +26,10 @@
     <h1>Login</h1>
     <form id="login" class="uk-form-horizontal" action="/login" method="GET" autocomplete="on">
       {% csrf_token %}
-      <label class="uk-form-label" for="email">Email:</label>
-      <input type="email" name="email" id="email" />
-      <label class="uk-form-label" for="password">Password:</label>
-      <input type="password" name="password" id="password" />
+      <label class="uk-form-label" for="email_login">Email:</label>
+      <input type="email" name="email_login" id="email_login" />
+      <label class="uk-form-label" for="password_login">Password:</label>
+      <input type="password" name="password_login" id="password_login" />
       <div class="uk-margin-top uk-flex uk-flex-center">
         <input class="uk-button uk-button-primary" type="submit" value="Login" />
       </div>
@@ -42,6 +43,7 @@
   $("form").submit(function (event) {
     event.preventDefault();
     var form = $(this).serialize();
+    $(".uk-text-danger").remove();
     $.ajax({
       type: "POST",
       url: $(this).attr("action"),
@@ -53,13 +55,14 @@
         } else {
           for (const property in data) {
             msg =
-              "<div id='div-alert' class='uk-alert-danger' uk-alert><a class='uk-alert-close' uk-close></a><p>" +
+              "<div id='div-alert' class='uk-text-danger'><p>" +
               data[property] +
               "</p></div>";
-            $("#alerts").append(msg);
+            //$("#alerts").append(msg);
+            $("#" + property).after(msg)
           }
           setTimeout(function () {
-            $("#alerts").empty();
+            $(".uk-text-danger").remove();
           }, 5000);
         }
       },

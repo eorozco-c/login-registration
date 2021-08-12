@@ -1,41 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
-    {% block stylesheet %}{% endblock %}
-    <!--FontAwesome Icons-->
-    <link
-      href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.no-icons.min.css"
-      rel="stylesheet"
-    />
-    <link
-      href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css"
-      rel="stylesheet"
-    />
-    <!-- UIkit CSS -->
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/uikit@3.7.1/dist/css/uikit.min.css"
-    />
 
-    <!-- UIkit JS -->
-    <script src="https://cdn.jsdelivr.net/npm/uikit@3.7.1/dist/js/uikit.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/uikit@3.7.1/dist/js/uikit-icons.min.js"></script>
-    <title>{% block title %}{% endblock %}</title>
-  </head>
-  <body class="uk-padding-small">
-    <header></header>
-    <main class="uk-container uk-margin-auto">
-      <div id="alerts"></div>
-      {% block content %} {% endblock %}
-    </main>
-    <footer></footer>
-    <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
-    <script src="{% static 'js/app.js' %}"></script>
-    {% block javascript %}{% endblock %}
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  {% load static %}
+  <!--FontAwesome Icons-->
+  <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.no-icons.min.css"
+    rel="stylesheet" />
+  <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet" />
+  <!-- UIkit CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.7.1/dist/css/uikit.min.css" />
+
+  <!-- UIkit JS -->
+  <script src="https://cdn.jsdelivr.net/npm/uikit@3.7.1/dist/js/uikit.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/uikit@3.7.1/dist/js/uikit-icons.min.js"></script>
+  {% block stylesheet %}{% endblock %}
+  <title>{% block title %}{% endblock %}</title>
+</head>
+
+<body class="uk-padding-small">
+  <header></header>
+  <main>
+    {% block content %} {% endblock %}
+  </main>
+  <footer></footer>
+  <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+  {% comment %} <script src="{% static 'js/app.js' %}"></script> {% endcomment %}
+  {% block javascript %}{% endblock %}
+</body>
+
 </html>
