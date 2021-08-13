@@ -1,73 +1,192 @@
 {% extends 'base.html' %}
 {% block title %}Wall{% endblock title %}
 {% block content %}
-<div class="uk-flex-between" uk-grid>
-    <h1>CodingDojo Wall</h1>
-    <div class="uk-flex-between" uk-grid>
+<nav class="uk-navbar-container  uk-text-center" uk-navbar>
+    <h1 class="uk-navbar-left">CODING DOJO WALL</h1>
+
+    <div class="uk-navbar-right" uk-grid>
         <p>Welcome {{usuario.first_name}}</p>
         <a href="/logout">Log out</a>
     </div>
-</div>
+</nav>
+
 <hr class="uk-margin">
-{% if messages %}
-{% for m in messages %}
-<div id='div-alert' class='uk-alert-danger' uk-alert><a class='uk-alert-close' uk-close></a>
-    <p>{{m}}</p>
-</div>
-{% endfor %}
-{% endif %}
 <div class="uk-container">
     <div id="alerts"></div>
-    <form action="/wall/create" method="POST">
+    <form id="form_message" action="/wall/create" method="POST">
         {% csrf_token %}
-        <legend>Post a message</legend>
+        <legend class="uk-legend">Post a message</legend>
         <textarea class="uk-textarea" name="create_message" id="create_message" cols="50" rows="10"></textarea>
         <div class="uk-margin-top uk-flex uk-flex-right">
             <input class="uk-button uk-button-large uk-button-primary uk-border-rounded" type="submit"
                 value="Post a message" />
         </div>
     </form>
-    {% for message in message_users  %}
-    <hr class="uk-margin-small">
-    <p class="uk-text-primary uk-text-bold">{{message.user.first_name}} {{message.user.last_name}},
-        {{message.created_at}}</p>
-    <ul class="uk-list uk-margin-left">
-        <li>
-            <p class="uk-text-italic">{{message.message}}</p>
-        </li>
-        <li>
-            {% for comment in comments  %}
-            {% if comment.message_id == message.id %}
-            <hr class="uk-margin-small">
-            <ul class="uk-list uk-margin-left">
+    <h3>Publicaciones</h3>
+    <div id="publicaciones">
+        {% for message in message_users  %}
+        <hr class="uk-margin-small">
+        <p class="uk-text-primary uk-text-bold">{{message.user.first_name}} {{message.user.last_name}},
+            {{message.created_at}}</p>
+        <div>
+            <ul id="publicacion-{{message.id}}" class="uk-list uk-margin-left">
                 <li>
-                    <p class="uk-text-bold">{{comment.user.first_name}} {{comment.user.last_name}},
-                        {{comment.created_at}}</p>
-                    <p class="uk-text-italic">{{comment.comment}}</p>
-                    {% if comment.user_id == usuario.id %}
-                    <a class="uk-button uk-button-small uk-button-danger uk-border-rounded"
-                        href="/wall/comment_delete/{{comment.id}}" id="delete" uk-icon="icon: trash">Delete
-                        Comment
-                    </a>
+                    <p class="uk-text-italic">{{message.message}}</p>
+                </li>
+
+                {% for comment in comments  %}
+                {% if comment.message_id == message.id %}
+                <li id="comment-{{comment.id}}">
+                    <hr class="uk-margin-small">
+                    <ul class="uk-list uk-margin-left">
+                        <li>
+                            <p class="uk-text-bold">{{comment.user.first_name}} {{comment.user.last_name}},
+                                {{comment.created_at}}</p>
+                            <p class="uk-text-italic">{{comment.comment}}</p>
+                            {% if comment.user_id == usuario.id %}
+                            <a class="uk-button uk-button-small uk-button-danger uk-border-rounded"
+                                href="/wall/comment_delete/{{comment.id}}" id="delete" uk-icon="icon: trash">Delete
+                                Comment
+                            </a>
+                            {% endif %}
+                        </li>
+                    </ul>
+
+
                     {% endif %}
+                    {% endfor %}
                 </li>
             </ul>
-            {% endif %}
-
-            {% endfor %}
-        </li>
-    </ul>
-    <form action="/wall/comment_message/{{message.id}}" method="POST">
-        {% csrf_token %}
-        <textarea class="uk-margin-left uk-textarea uk-form-small" name="comment_message" id="comment_message" cols="50"
-            rows="5"></textarea>
-        <div class="uk-margin-top uk-flex uk-flex-right">
-            <input class="uk-button uk-button-secondary uk-border-rounded" type="submit" value="Post a comment" />
         </div>
-    </form>
+        <form id="form_comment" action="/wall/comment_message/{{message.id}}" method="POST">
+            {% csrf_token %}
+            <textarea class="uk-margin-left uk-textarea uk-form-small" name="comment_message" id="comment_message"
+                cols="50" rows="5"></textarea>
+            <div class="uk-margin-top uk-flex uk-flex-right">
+                <input class="uk-button uk-button-secondary uk-border-rounded" type="submit" value="Post a comment" />
+            </div>
+        </form>
 
-    {% endfor %}
-</div>
-{% endblock content %}
-{% block javascript %}
-{% endblock javascript %}
+        {% endfor %}
+    </div>
+    {% endblock content %}
+    {% block javascript %}
+    <script>
+        $("form#form_message").submit(function (event) {
+            event.preventDefault();
+            var form = $(this).serialize();
+            $("#alerts").empty();
+            $("#create_message").val("");
+            $.ajax({
+                type: "POST",
+                url: $(this).attr("action"),
+                data: form,
+                dataType: "json",
+                success: function (data) {
+                    if ("id" in data) {
+                        appendMessage(data);
+                        $("#alerts").append(
+                            "<div id='div-alert' class='uk-alert-succes' uk-alert><a class='uk-alert-close' uk-close></a><p>Publicacion agregada correctamente</p></div>"
+                        )
+                        setTimeout(function () {
+                            $("#alerts").empty();
+                        }, 3000);
+                    } else {
+                        for (const property in data) {
+                            msg =
+                                "<div id='div-alert' class='uk-alert-danger' uk-alert><a class='uk-alert-close' uk-close></a><p>" +
+                                data[property] + "</p></div>"
+
+                            $("#alerts").append(msg);
+                        }
+
+                    }
+                },
+            });
+        });
+
+        $("form#form_comment").submit(function (event) {
+            event.preventDefault();
+            var form = $(this).serialize();
+            $("#div-alert").remove();
+            $("#comment_message").val("");
+            $.ajax({
+                type: "POST",
+                url: $(this).attr("action"),
+                data: form,
+                dataType: "json",
+                success: function (data) {
+                    if ("id" in data) {
+                        appendComment(data);
+                    } else {
+                        msg =
+                            "<div id='div-alert' class='uk-alert-danger' uk-alert><a class='uk-alert-close' uk-close></a><p>" +
+                            data.comment_message + "</p></div>"
+
+                        $(`#publicacion-${data.idMesagge}`).append(msg);
+                    }
+                },
+            });
+        });
+
+
+        function appendMessage(msg) {
+            $("#publicaciones").prepend(`
+                    <hr class="uk-margin-small">
+                    <p class="uk-text-primary uk-text-bold">${msg.first_name} ${msg.last_name}, ${msg.created_at}</p>
+                    <div id="publicacion-${msg.id}">
+                        <ul class="uk-list uk-margin-left">
+                            <li>
+                                <p class="uk-text-italic">${msg.message}</p>
+                            </li>
+                        </ul>
+                    </div>
+                     <form action="/wall/comment_message/${msg.id}" method="POST">
+                        {% csrf_token %}
+                        <textarea class="uk-margin-left uk-textarea uk-form-small" name="comment_message" id="comment_message" cols="50" rows="5"></textarea>
+                        <div class="uk-margin-top uk-flex uk-flex-right">
+                            <input class="uk-button uk-button-secondary uk-border-rounded" type="submit" value="Post a comment" />
+                        </div>
+                    </form>
+                    `);
+        }
+
+        function appendComment(cmt) {
+            $(`#publicacion-${cmt.idMessage}`).append(`
+            <li id="comment-${cmt.id}" >
+                <hr class="uk-margin-small">
+                <ul class="uk-list uk-margin-left">
+                    <li>
+                        <p class="uk-text-bold">${cmt.first_name} ${cmt.last_name}, ${cmt.created_at}</p>
+                        <p class="uk-text-italic">${cmt.comment}</p>
+                        <a class="uk-button uk-button-small uk-button-danger uk-border-rounded" href="/wall/comment_delete/${cmt.id}" id="delete" uk-icon="icon: trash">Delete Comment</a>
+                    </li>
+                </ul>
+            </li>
+            `);
+        };
+
+
+        $("#delete").click(function (event) {
+            $("#div-alert").remove();
+            $.ajax({
+                type: "GET",
+                url: $(this).attr("href"),
+                dataType: "json",
+                success: function (data) {
+                    if ("id" in data) {
+                        $(`#comment-${data.id}`).remove();
+                    } else {
+                        for (const property in data) {
+                            msg =
+                                "<div id='div-alert' class='uk-alert-danger' uk-alert><a class='uk-alert-close' uk-close></a><p>" +
+                                data[property] + "</p></div>"
+
+                            $("#alerts").append(msg);
+                        }
+                    }
+                },
+            });
+        });
+    </script>
+    {% endblock javascript %}
