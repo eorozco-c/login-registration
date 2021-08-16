@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% block title %}Favorite Books{% endblock title %}
+{% block content %}
+<nav class="uk-navbar-container  uk-text-center" uk-navbar>
+    <h1 class="uk-navbar-left"> <a class="uk-text-decoration-none" href="/books"> Welcome, {{usuario.first_name}}!</a>
+    </h1>
+    <a class="uk-navbar-right" href="/logout">Log out</a>
+</nav>
+<div class="uk-container uk-margin-auto" uk-grid>
+    {% if libro.uploaded_by.id == usuario.id %}
+    <div class="uk-width-1-2@s">
+        <form id="" class="uk-form-horizontal" action="/books/update/{{libro.id}}" method="POST" autocomplete="on">
+            {% csrf_token %}
+            <input class="uk-input" id="title" type="text" name="title" value="{{libro.title}}">
+            <p>Added by: {{libro.uploaded_by.first_name}} {{libro.uploaded_by.last_name}}</p>
+            <p>Adde on: {{libro.created_at}}</p>
+            <p>Last Updated on: {{libro.updated_at}}</p>
+            <label class="uk-form-label" for="description">Description:</label>
+            <div class="uk-form-controls uk-margin-bottom">
+                <textarea class="uk-textarea  uk-form-width-medium" name="description" id="description" cols="30"
+                    rows="10">{{libro.description}}</textarea>
+            </div>
+            <div class="uk-form-controls">
+                <input class="uk-button uk-button-primary uk-border-rounded" type="submit" value="Update book" />
+                <a class="uk-button uk-button-danger uk-border-rounded" href="/books/delete/{{libro.id}}">Delete</a>
+            </div>
+        </form>
+    </div>
+    <div class="uk-width-1-2@s">
+        <h2>Users Who Like This Book</h2>
+        <ul>
+            {% for userLike in libro.users_who_like.all %}
+            <li>{{userLike.first_name}} {{userLike.last_name}} {% if userLike.id == usuario.id %}
+                <span><a href="">Un-Favorite</a></span>
+                {% endif %}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% else %}
+    <div class="uk-width-1-2@s">
+        <h2>{{libro.title}}</h2>
+        <p>Added by: {{libro.uploaded_by.first_name}} {{libro.uploaded_by.last_name}}</p>
+        <p>Adde on: {{libro.created_at}}</p>
+        <p>Last Updated on: {{libro.updated_at}}</p>
+        <p>Description: {{libro.description}}</p>
+    </div>
+    <div class="uk-width-1-2@s">
+        <h2>Users Who Like This Book</h2>
+        <ul>
+            {% for userLike in libro.users_who_like.all %}
+            <li>{{userLike.first_name}} {{userLike.last_name}}</li>
+            {% endfor %}
+        </ul>
+        {% if messages %}
+        {% for message in messages %}
+        <div class="uk-alert-danger" uk-alert>
+            <a class="uk-alert-close" uk-close></a>
+            <p>{{ message }}</p>
+        </div>
+        {% endfor %}
+        {% endif %}
+        <a href="/books/like/{{libro.id}}">Add to favorite</a>
+
+    </div>
+    {% endif %}
+</div>
+{% endblock content %}

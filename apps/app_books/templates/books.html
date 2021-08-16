@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% block title %}Favorite Books{% endblock title %}
+{% block content %}
+<nav class="uk-navbar-container  uk-text-center" uk-navbar>
+    <h1 class="uk-navbar-left"> <a class="uk-text-decoration-none" href="/books"> Welcome, {{usuario.first_name}}!</a>
+    </h1>
+    <a class="uk-navbar-right" href="/logout">Log out</a>
+</nav>
+<hr class="uk-margin">
+<div class="uk-container uk-margin-auto" uk-grid>
+    <div class="uk-width-1-2@s">
+        <h2>Add a Favorite Book</h2>
+        <form id="" class="uk-form-horizontal" action="/books/create" method="POST" autocomplete="on">
+            {% csrf_token %}
+            {% for message in messages %}
+            {% if message.tags == "title error" %}
+            <div class="uk-alert-danger" uk-alert>
+                <a class="uk-alert-close" uk-close></a>
+                <p>{{ message}}</p>
+            </div>
+            {% endif %}
+            {% endfor %}
+            <label class="uk-form-label" for="title">Title:</label>
+            <div class="uk-form-controls uk-margin-bottom">
+                <input class="uk-input  uk-form-width-medium" id="title" type="text" name="title">
+            </div>
+            {% for message in messages %}
+            {% if message.tags == "description error" %}
+            <div class="uk-alert-danger" uk-alert>
+                <a class="uk-alert-close" uk-close></a>
+                <p>{{ message}}</p>
+            </div>
+            {% endif %}
+            {% endfor %}
+            <label class="uk-form-label" for="description">Description:</label>
+            <div class="uk-form-controls uk-margin-bottom">
+                <textarea class="uk-textarea  uk-form-width-medium" name="description" id="description" cols="30"
+                    rows="10"></textarea>
+            </div>
+            <div class="uk-form-controls">
+                <input class="uk-button uk-button-primary uk-border-rounded" type="submit" value="Add Book" />
+            </div>
+
+
+        </form>
+    </div>
+    <div class="uk-width-1-2@s">
+        <h2>All Books</h2>
+        {% for libro in  libros %}
+        <div class="uk-margin-bottom">
+            <h4><a href="/books/{{libro.id}}">{{libro.title}}</a></h4>
+            <p>(added by {{libro.uploaded_by.first_name}} {{libro.uploaded_by.last_name}})</p>
+            {% if usuario in libro.users_who_like.all%}
+            <p>This is one of your favorites</p>
+            {% else %}
+            <a href="/books/like/{{libro.id}}">Add to favorite</a>
+            {% endif %}
+
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock content %}

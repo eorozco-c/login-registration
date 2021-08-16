@@ -50,7 +50,7 @@ def login(request):
 def success(request):
     if request.method == "GET":
         if "id" in request.session:
-            return redirect("/wall")
+            return redirect("/books")
         return redirect("/")
 
 def logout(request):
