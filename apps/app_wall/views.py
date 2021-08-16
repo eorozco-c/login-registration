@@ -13,7 +13,7 @@ def wall(request):
             context = {
                 "usuario" : User.objects.get(id=idusuario),
                 "message_users" : Message.objects.all().order_by("-id"),
-                "comments" : Comment.objects.all(),
+                "comments" : Comment.objects.all().order_by("-id"),
             }
             return render(request, "wall.html", context)
     return redirect("/")
@@ -72,15 +72,10 @@ def comment_delete(request,idComment):
             errors = Comment.objects.validate_comments_delete(idComment)
             if len(errors) > 0:
                 errors["idComment"] = idComment
-                return redirect("/wall")
-            try:
-                del_comment = Comment.objects.get(id=idComment)
-                id_comment = del_comment.id
-                del_comment.delete()
-            except:
-                del_comment = None
-                errors["idComment"] = idComment
-                return redirect("/wall")
-            print(id_comment)
-            return redirect("/wall")
+                print(errors)
+                return JsonResponse(errors)
+            del_comment = Comment.objects.get(id=idComment)
+            del_comment.delete()   
+            # return JsonResponse({"id" : idComment})
+            return redirect("/wall")  
     return redirect("/")

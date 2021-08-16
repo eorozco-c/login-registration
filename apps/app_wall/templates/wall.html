@@ -51,8 +51,6 @@
                             {% endif %}
                         </li>
                     </ul>
-
-
                     {% endif %}
                     {% endfor %}
                 </li>
@@ -108,8 +106,8 @@
         $("form#form_comment").submit(function (event) {
             event.preventDefault();
             var form = $(this).serialize();
-            $("#div-alert").remove();
             $("#comment_message").val("");
+            $("#div-alert").remove();
             $.ajax({
                 type: "POST",
                 url: $(this).attr("action"),
@@ -153,7 +151,8 @@
 
         function appendComment(cmt) {
             $(`#publicacion-${cmt.idMessage}`).append(`
-            <li id="comment-${cmt.id}" >
+            <div id="comment-${cmt.id}"">
+            <li>
                 <hr class="uk-margin-small">
                 <ul class="uk-list uk-margin-left">
                     <li>
@@ -163,27 +162,26 @@
                     </li>
                 </ul>
             </li>
+            </div>
             `);
         };
 
-
         $("#delete").click(function (event) {
+            event.preventDefault();
             $("#div-alert").remove();
+            console.log("AQUI")
             $.ajax({
                 type: "GET",
                 url: $(this).attr("href"),
-                dataType: "json",
+                dataType: 'json',
                 success: function (data) {
                     if ("id" in data) {
-                        $(`#comment-${data.id}`).remove();
+                        $(`#comment-${data.idComment}`).empty();
                     } else {
-                        for (const property in data) {
-                            msg =
-                                "<div id='div-alert' class='uk-alert-danger' uk-alert><a class='uk-alert-close' uk-close></a><p>" +
-                                data[property] + "</p></div>"
-
-                            $("#alerts").append(msg);
-                        }
+                        msg =
+                            "<div id='div-alert' class='uk-alert-danger' uk-alert><a class='uk-alert-close' uk-close></a><p>" +
+                            data.datetime + "</p></div>";
+                        $(`#comment-${data.idComment}`).append(msg);
                     }
                 },
             });
