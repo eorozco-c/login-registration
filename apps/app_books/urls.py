@@ -8,4 +8,5 @@ urlpatterns = [
     path('update/<int:idBook>',views.update_book),
     path('delete/<int:idBook>',views.delete_book),
     path('like/<int:idBook>',views.like_book),
+    path('profile',views.profile)
     ]

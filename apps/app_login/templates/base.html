@@ -20,6 +20,19 @@
 <body class="uk-padding-small">
   <header></header>
   <main>
+    {% if usuario %}
+    <nav class="uk-navbar-container  uk-text-center" uk-navbar>
+      <h1 class="uk-navbar-left"> <a class="uk-text-decoration-none" href="/books"> Welcome, {{usuario.first_name}}!</a>
+      </h1>
+      <div class="uk-navbar-right">
+        <a class="uk-margin-right" href="/books">Books</a>
+        <a class="uk-margin-right" href="/wall">Wall</a>
+        <a class="uk-margin-right" href="/books/profile">Profile</a>
+        <a class="uk-margin-right" href="/logout">Log out</a>
+      </div>
+    </nav>
+    <hr class="uk-margin">
+    {% endif %}
     {% block content %} {% endblock %}
   </main>
   <footer></footer>

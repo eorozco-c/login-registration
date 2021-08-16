@@ -1,16 +1,6 @@
 {% extends 'base.html' %}
 {% block title %}Wall{% endblock title %}
 {% block content %}
-<nav class="uk-navbar-container  uk-text-center" uk-navbar>
-    <h1 class="uk-navbar-left">CODING DOJO WALL</h1>
-
-    <div class="uk-navbar-right" uk-grid>
-        <p>Welcome {{usuario.first_name}}</p>
-        <a href="/logout">Log out</a>
-    </div>
-</nav>
-
-<hr class="uk-margin">
 <div class="uk-container">
     <div id="alerts"></div>
     <form id="form_message" action="/wall/create" method="POST">

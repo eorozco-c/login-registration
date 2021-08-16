@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}Favorite Books{% endblock title %}
+{% block content %}
+<div class="uk-container uk-margin-auto">
+    <h1>All Favorite Books</h1>
+    <ul>
+        {% for book in usuario.liked_books.all  %}
+        <li>{{book.title}}</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock content %}

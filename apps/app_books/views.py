@@ -89,3 +89,13 @@ def like_book(request,idBook):
             book.users_who_like.add(user_upload)
             return redirect(f"/books/{idBook}")
     return redirect("/")
+
+def profile(request):
+    if request.method == "GET":
+        if "id" in request.session:
+            idusuario = request.session["id"]
+            context = {
+                "usuario" : User.objects.get(id=idusuario),
+            }
+            return render(request,"user_books.html",context)
+    return redirect("/")
