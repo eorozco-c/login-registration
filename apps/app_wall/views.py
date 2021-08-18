@@ -61,7 +61,7 @@ def comment_message(request, idMesagge):
                 "first_name" : new_commentario.user.first_name,
                 "last_name" : new_commentario.user.last_name,
                 "comment" : new_commentario.comment,
-                "created_at" : datetime.strftime(new_commentario.created_at, "%d de %B de %Y a las %H:%M")
+                "created_at" : datetime.strftime(new_commentario.created_at, "%d de %B de %Y a las %H:%M").lower()
             }
             return JsonResponse(data)
     return redirect("/")
@@ -72,10 +72,8 @@ def comment_delete(request,idComment):
             errors = Comment.objects.validate_comments_delete(idComment)
             if len(errors) > 0:
                 errors["idComment"] = idComment
-                print(errors)
                 return JsonResponse(errors)
             del_comment = Comment.objects.get(id=idComment)
             del_comment.delete()   
-            # return JsonResponse({"id" : idComment})
-            return redirect("/wall")  
+            return JsonResponse({"id" : idComment})
     return redirect("/")
